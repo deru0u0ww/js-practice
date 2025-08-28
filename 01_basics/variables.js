@@ -48,3 +48,9 @@ console.log( tmp ); //1
  console.log( m ); //2 ;
 // n = tmp;
 // console.log('入れ替え後は：m = ' + m + ', n = ' + n); //m = 2, n = 1
+
+//--------------------------------
+console.log ( n**3); //8
+console.log ( n**4); //16
+console.log ( n**5); //32
+console.log ( n**6); //64
