@@ -15,12 +15,18 @@ const counter = {
         const downBtn = document.createElement('button');
         downBtn.textContent = '-';
         container.appendChild(downBtn);
+        //リセットボタン要素
+        const resetBtn = document.createElement('button');
+        resetBtn.textContent = 'Reset';
+        container.appendChild(resetBtn);
         
         //値の表示
         const valueElem = document.createElement('p');
         container.appendChild(valueElem);
         
+        //分割代入でelemensに代入することで、uppdateメソッド内でも参照できる
         this.elements = { container, addBtn, downBtn, valueElem};
+
         //追加ボタンのクリックイベント
         addBtn.addEventListener('click', ()=> {
             this.value++;
@@ -32,6 +38,10 @@ const counter = {
             this.value--;
             this.update();
         })
+        resetBtn.addEventListener('click', ()=> {
+            this.value = 0;
+            this.update();
+        })
         //初期表示
         this.update();
     },
@@ -39,7 +49,6 @@ const counter = {
         const { valueElem } = this.elements;
         //値の表示を更新
         this.elements.valueElem.textContent = this.value;
-
         valueElem.style.color = this.value >= 0 ? 'green' : 'red';
     }
 
