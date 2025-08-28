@@ -86,8 +86,8 @@ console.log( value |= '規定値'); //valueがnullまたはundefinedの場合に
 console.log( value ??= '規定値'); //valueがnullまたはundefinedの場合に右辺を返す この場合は規定値を返す
 
 
-let score = 80;
-console.log( score >= 70 ? '合格' : '不合格' ); //合格
+let score = 60;
+console.log( score >= 70 ? '合格' : '不合格' ); //不合格
 
 //倫理演算子
 console.log( true && true ); //true
