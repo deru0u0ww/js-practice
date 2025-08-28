@@ -48,7 +48,7 @@ const counter = {
     update() {
         const { valueElem } = this.elements;
         //値の表示を更新
-        this.elements.valueElem.textContent = this.value;
+        valueElem.textContent = this.value;
         valueElem.style.color = this.value >= 0 ? 'green' : 'red';
     }
 
