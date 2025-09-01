@@ -1,6 +1,7 @@
 'use strict';
 
 const fortuneApp = {
+    _inited: false,
     fortunes: [
         { 
             result: "大吉",
@@ -44,46 +45,81 @@ const fortuneApp = {
             work: "トラブル回避が最優先。大きな決断は控えよう。",
             money: "予想外の出費に注意。無駄遣いは厳禁。"
         }
-            ],
-            elements: {},
+        ],
+        rng: Math.random,
+        els: {},
 
-    init: function() {
+    init(options = {}) {
         if ( this._inited ) return; //多重初期化ガード
-        this.getElements();
-        this.bindElements();
-        this._inited = true;
-    },
-    getElements: function() {
-        const drawBtn = document.querySelector('#drawBtn');
-        const resultEl = document.querySelector('#result');
-        const workEl = document.querySelector('#work');
-        const loveEl = document.querySelector('#love');
-        const moneyEl = document.querySelector('#money');
+        if ( options.rng ) this.rng = options.rng;
+        this.cacheEls();
+        this.bindEvents();
+        this.ensureA11y();
 
-        // 存在チェック
-    if (!drawBtn || !resultEl || !workEl || !loveEl || !moneyEl) {
-      throw new Error('必要な要素が見つかりません（#drawBtn, #result, #work, #love, #money）');
+        // データの存在チェック
+        //配列内のfortuneが配列でない場合にtrue　または、fortunesの結果が０の場合
+        if (!Array.isArray(this.fortunes) || this.fortunes.length === 0) {
+        console.warn('fortunes が空です。');
     }
-        this.elements = { drawBtn,resultEl,workEl,loveEl,moneyEl };
+    //初期化が完了したのでtrueに変更している
+    this._inited = true;
     },
-    bindElements: function() {
-        const { drawBtn } = this.elements;
-        drawBtn.addEventListener('click', ()=> {this.showFortune();});
-    },
-    getRandomIndex: function() {
-     return  Math.floor(Math.random()*this.fortunes.length);
-    },
-    showFortune: function() {
-        const { resultEl, workEl, loveEl, moneyEl } = this.elements;
-        const pick = this.fortunes[this.getRandomIndex()];
+    //要素を取得
+    cacheEls() {
+    //存在チェックを入れている。要素が取得できない場合にエラー表示
+    const get = (sel) => {
+      const el = document.querySelector(sel);
+      if (!el) throw new Error(`必要な要素が見つかりません: ${sel}`);
+      return el;
+    };
+    //要素を取得
+    //関数の引数として値を取得して存在チェックで都度入れている
+    //また分割代入で要素をelsに代入することで他メソッドでも呼び出すことで再利用可能
+    this.els = {
+      drawBtn: get('#drawBtn'),
+      resultEl: get('#result'),
+      workEl:   get('#work'),
+      loveEl:   get('#love'),
+      moneyEl:  get('#money'),
+    };
+  },
+     bindEvents() {
+    const { drawBtn } = this.els;
+    drawBtn.addEventListener('click', () => this.showFortune());
+  },
+  //forEachでel要素に付与
+  //role statusとかはスクリーンリーダーっぽい、読み上げのためのやつ
+  ensureA11y() {
+    const { resultEl, workEl, loveEl, moneyEl } = this.els;
+    [resultEl, workEl, loveEl, moneyEl].forEach(el => {
+      el.setAttribute('role', 'status');
+      el.setAttribute('aria-live', 'polite');
+    });
+  },
 
-        resultEl.textContent = pick.result;
-        loveEl.textContent   = `恋愛運: ${pick.love}`;
-        workEl.textContent   = `仕事運: ${pick.work}`;
-        moneyEl.textContent  = `お金運: ${pick.money}`;
-    }
-    
+  getRandomIndex() {
+    return Math.floor(this.rng() * this.fortunes.length);
+  },
 
-}
-fortuneApp.init();
+  pickFortune() {
+    //もしfortunesが空の場合にtrue
+    //早期リターン
+    if (!this.fortunes.length) return null;
+    return this.fortunes[this.getRandomIndex()];
+  },
 
+  showFortune() {
+    const f = this.pickFortune();
+    if (!f) return;
+
+    const { resultEl, workEl, loveEl, moneyEl } = this.els;
+
+    resultEl.textContent = f.result;
+    loveEl.textContent   = `恋愛運: ${f.love}`;
+    workEl.textContent   = `仕事運: ${f.work}`;
+    moneyEl.textContent  = `金運: ${f.money}`; 
+  }
+};
+
+// DOM構築後に初期化（または <script defer> を使用）
+document.addEventListener('DOMContentLoaded', () => fortuneApp.init());
