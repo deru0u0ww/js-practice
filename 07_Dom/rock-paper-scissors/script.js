@@ -42,6 +42,7 @@ const JankenGame = {
             retryBtn: get('#retry-btn'),
             progressText: get('#progress-text'),
             enemyImage: get('#enemy-image'),
+            historyList: get('#history'),
             
         }
     },
@@ -60,7 +61,7 @@ const JankenGame = {
     },
     playRound( myHand ) {
         if (this.roundCount >= 5) return; //5回終了後は無視（ボタンは無効化してるけど二重保険をかけてる）
-        const { enemyHandImage, myHandImage, resultText,enemyImage } = this.elements;
+        const { enemyHandImage, myHandImage, resultText,enemyImage,historyList } = this.elements;
         const enemyHand = this.getRandomHand();
         myHandImage.src = this.handsImage[myHand];
         enemyHandImage.src = this.handsImage[enemyHand];
@@ -85,6 +86,10 @@ const JankenGame = {
         //処理によって変数に代入してその結果を書き込みしてる！！すごい
         resultText.textContent = result;
         this.roundCount++;
+
+        const li = document.createElement('li');
+        li.textContent = `${this.roundCount}戦目:あなた=${myHand}、あいて=${enemyHand} → ${result}`;
+        historyList.appendChild(li);
         this.update();
     },
     
@@ -120,7 +125,7 @@ const JankenGame = {
   reset() {
     const {
       rockBtn, scissorsBtn, paperBtn,
-      enemyHandImage, myHandImage, resultText, finalResult, retryBtn, progressText
+      enemyHandImage, myHandImage, resultText, finalResult, retryBtn, progressText,historyList,
     } = this.elements;
 
     this.roundCount = 0;
@@ -138,6 +143,8 @@ const JankenGame = {
     resultText.textContent = '';
     finalResult.textContent = '';
     progressText.textContent = '進捗：0/5戦 現在：0勝（勝率 0%）';
+
+    historyList.replaceChildren();
   }
 };
 document.addEventListener('DOMContentLoaded', ()=> { JankenGame.init()});
