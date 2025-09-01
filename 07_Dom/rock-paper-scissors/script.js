@@ -5,16 +5,22 @@ const JankenGame = {
     _inited: false,
     roundCount: 0,
     winCount: 0,
+    images:'',
+    handsImage: {
+        rock: './images/rock.png',
+        scissors: './images/scissors.png',
+        paper: './images/paper.png'
+    },
     rng: Math.random,
     init( options = { }){
         if( this._inited ) { return };
         if( options.rng ) { this.rng = options.rng }
 
         if(!Array.isArray(this.enemyHands) || this.enemyHands.length === 0 ) {
-            console.warn('enemy-handsが空です');
+            console.warn('enemyHandsが空です');
         } 
-        this.cacheEls();
-        this.bindBtn();
+        this.cacheEls();//要素取得の関数
+        this.bindBtn();//イベント処理の関数
         this.update();
         this.reset();
         this._inited = true;
@@ -29,12 +35,13 @@ const JankenGame = {
             rockBtn: get('#rock-hand'),
             scissorsBtn: get('#scissors-hand'),
             paperBtn: get('#paper-hand'),
-            enemyHandText: get('#enemy-hands'),
+            enemyHandImage: get('#enemy-hands-image'),
             resultText: get('#enemy-text'),
-            myHandText: get('#my-hand'),
+            myHandImage: get('#my-hands-image'),
             finalResult: get('#final-result'),
             retryBtn: get('#retry-btn'),
             progressText: get('#progress-text'),
+            enemyImage: get('#enemy-image'),
             
         }
     },
@@ -52,28 +59,30 @@ const JankenGame = {
         return this.enemyHands[Math.floor(this.rng() * this.enemyHands.length)];
     },
     playRound( myHand ) {
-        if (this.roundCount >= 5) return;
-        const { enemyHandText, myHandText, resultText } = this.elements;
+        if (this.roundCount >= 5) return; //5回終了後は無視（ボタンは無効化してるけど二重保険をかけてる）
+        const { enemyHandImage, myHandImage, resultText,enemyImage } = this.elements;
         const enemyHand = this.getRandomHand();
-
-        myHandText.textContent = myHand;
-        enemyHandText.textContent = enemyHand;
-
+        myHandImage.src = this.handsImage[myHand];
+        enemyHandImage.src = this.handsImage[enemyHand];
+        //変数宣言→文字列が入ることの宣言
         let result = '';
 
         if (myHand === enemyHand) {
-        result = 'あいこ';
+            result = 'あなた：あいこ';
+            enemyImage.src = './images/thing.png';
         } else if (
-        (myHand === 'rock' && enemyHand === 'scissors') ||
-        (myHand === 'scissors' && enemyHand === 'paper') ||
-        (myHand === 'paper' && enemyHand === 'rock')
+            (myHand === 'rock' && enemyHand === 'scissors') ||
+            (myHand === 'scissors' && enemyHand === 'paper') ||
+            (myHand === 'paper' && enemyHand === 'rock')
         ) {
-        result = '勝ち';
-        this.winCount++;
+            result = 'あなた：勝ち';
+            enemyImage.src = './images/angry.png';
+            this.winCount++;
         } else {
-        result = '負け';
+            result = 'あなた：負け';
+            enemyImage.src = './images/happy.png';
         }
-
+        //処理によって変数に代入してその結果を書き込みしてる！！すごい
         resultText.textContent = result;
         this.roundCount++;
         this.update();
@@ -81,37 +90,37 @@ const JankenGame = {
     
     update(){
         const { rockBtn, scissorsBtn, paperBtn, finalResult, retryBtn, progressText} = this.elements;
-// 途中経過（勝率・進捗）
-    const played = this.roundCount;
-    const wins = this.winCount;
-    const winRate = played === 0 ? 0 : Math.round((wins / played) * 100);
-    progressText.textContent = `進捗：${played}/5戦 現在：${wins}勝（勝率 ${winRate}%）`;
+        // 途中経過（勝率・進捗）
+            const played = this.roundCount;
+            const wins = this.winCount;
+            //勝負数が０なら０、それ以外は勝率を表示
+            const winRate = played === 0 ? 0 : Math.round((wins / played) * 100);
+            progressText.textContent = `進捗：${played}/5戦 現在：${wins}勝（勝率 ${winRate}%）`;
 
     if (this.roundCount >= 5) {
-      // ラウンド終了：出し手ボタンを無効・リトライを有効
-      rockBtn.disabled = true;
-      scissorsBtn.disabled = true;
-      paperBtn.disabled = true;
-      retryBtn.disabled = false;
+        // ラウンド終了：出し手ボタンを無効・リトライを有効
+        rockBtn.disabled = true;
+        scissorsBtn.disabled = true;
+        paperBtn.disabled = true;
+        retryBtn.disabled = false;
 
-      finalResult.textContent =
-        this.winCount >= 3
-          ? `あなたの勝ち！(${this.winCount}勝 / 5戦)`
-          : `あなたの負け…(${this.winCount}勝 / 5戦)`;
-    } else {
-      // 進行中：出し手ボタンを有効・リトライは無効のまま
-      rockBtn.disabled = false;
-      scissorsBtn.disabled = false;
-      paperBtn.disabled = false;
-      retryBtn.disabled = true;
-      finalResult.textContent = '';
-    }
+        finalResult.textContent = this.winCount >= 3
+            ? `あなたの勝ち！(${this.winCount}勝 / 5戦)`
+            : `あなたの負け…(${this.winCount}勝 / 5戦)`;
+        } else {
+        // 進行中：出し手ボタンを有効・リトライは無効のまま
+            rockBtn.disabled = false;
+            scissorsBtn.disabled = false;
+            paperBtn.disabled = false;
+            retryBtn.disabled = true;
+            finalResult.textContent = '';
+        }
   },
 
   reset() {
     const {
       rockBtn, scissorsBtn, paperBtn,
-      enemyHandText, myHandText, resultText, finalResult, retryBtn, progressText
+      enemyHandImage, myHandImage, resultText, finalResult, retryBtn, progressText
     } = this.elements;
 
     this.roundCount = 0;
@@ -124,8 +133,8 @@ const JankenGame = {
     retryBtn.disabled = true;
 
     // 表示クリア
-    enemyHandText.textContent = '';
-    myHandText.textContent = '';
+    enemyHandImage.src = './images/question.png';
+    myHandImage.src = './images/question.png';
     resultText.textContent = '';
     finalResult.textContent = '';
     progressText.textContent = '進捗：0/5戦 現在：0勝（勝率 0%）';
