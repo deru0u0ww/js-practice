@@ -60,6 +60,7 @@ const JankenGame = {
         return this.enemyHands[Math.floor(this.rng() * this.enemyHands.length)];
     },
     playRound( myHand ) {
+        //早期リターン
         if (this.roundCount >= 5) return; //5回終了後は無視（ボタンは無効化してるけど二重保険をかけてる）
         const { enemyHandImage, myHandImage, resultText,enemyImage,historyList } = this.elements;
         const enemyHand = this.getRandomHand();
