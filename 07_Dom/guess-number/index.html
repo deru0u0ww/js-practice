@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Document</title>
+</head>
+<body>
+    <main class="container">
+    <h1>数字当てゲーム</h1>
+    <p>1〜100の整数を当ててね!</p>
+
+    <div class="panel">
+      <label for="guess">あなたの予想</label>
+      <input id="input-number" type="number" min="1" max="100" inputmode="numeric" />
+      <button id="input-button">判定</button>
+      <button id="reset-button" class="ghost">リセット</button>
+    </div>
+    <p id="result-message"></p>
+    <div id="message" aria-live="polite" class="message"></div>
+    <div class="status">
+      <span id="tries">回数: 0</span>
+      <span id="limit">残り: 10</span>
+      <span id="best">ベスト: —</span>
+    </div>
+    <ul id="list"></ul>
+  </main>
+    <script src="./script.js"></script>
+</body>
+</html>

@@ -17,10 +17,14 @@ const MAX_TRIES = 2;
 
 //UI
 const $inputBtn = document.querySelector('#input-button');
-const $enterNumber = document.querySelector('#input-number')
+const $enterNumber = document.querySelector('#input-number');
 const $resetBtn = document.querySelector('#reset-button');
 const $lists = document.querySelector('#list');
 const $status = document.querySelector('#status'); 
+const $message = document.querySelector('#message');
+const $tries = document.querySelector('#tries');
+const $limit = document.querySelector('#limit');
+const $result = document.querySelector('#result-message');
 //推測ボタンイベント
 $inputBtn.addEventListener('click', ()=> {
     checkForm();
@@ -36,11 +40,14 @@ $resetBtn.addEventListener('click', ()=> {
     prevGuess = null;
     answer = Math.floor(Math.random()*100)+1; //再生成
     history.length = '';
-    $status.innerHTML = '';
     $lists.replaceChildren();
     $enterNumber.value = '';
+    $limit.innerHTML = '';
+    $limit.textContent = '残り: 10';
+    $tries.innerHTML = '';
+    $tries.textContent = '回数: 0';
     $enterNumber.focus();
-    // UIをリセット
+    $result.innerHTML = '';
     setPlaying(true);
     return;
 })
@@ -70,7 +77,7 @@ function checkForm() {
         isFinished = true;
     } else if( tries >= MAX_TRIES ) {
         isFinished = true;
-        console.log(`ゲームオーバー！正解は ${answer}`);
+        $result.textContent = `ゲームオーバー！正解は ${answer}`;
         setPlaying(false);
     }
     update();
@@ -85,7 +92,7 @@ function checkForm() {
     let result = '';
     if ( diff === 0 ) {
         result = '正解！！';
-        console.log(`${tries}回でクリアできたよ！！`)
+        $result.textContent = `${tries}回でクリアできたよ！！`;
         setPlaying(false);
         return true;
     }
@@ -120,5 +127,7 @@ function setPlaying(enabled) {
 
 function update() {
   const remain = Math.max(0, MAX_TRIES - tries);
-  $status.textContent = `${tries}回目 / 残り${remain}回`;
+  // $status.textContent = `${tries}回目 / 残り${remain}回`;
+  $tries.textContent = `回数：${tries}`;
+  $limit.textContent = `残り：${remain}/10`;
 }
