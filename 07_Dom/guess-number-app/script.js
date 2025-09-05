@@ -3,22 +3,27 @@ const MIN = 1;
 const MAX = 100;
 const history = [];
 let prevGuess = null; //未入力
+let answer = Math.floor(Math.random()*100)+1;
+const low = Math.min(MIN,answer - 20);
+const high = Math.max(MAX, answer + 20);
+const MAX_HISTORY = 5;
 //定数→変数
 let isFinished = false;
 //定数→変数
 let tries = 0;
-const MAX_TRIES = 10;
-let answer = Math.floor(Math.random()*100)+1;
+const MAX_TRIES = 2;
+
+
 
 //UI
 const $inputBtn = document.querySelector('#input-button');
 const $enterNumber = document.querySelector('#input-number')
 const $resetBtn = document.querySelector('#reset-button');
 const $lists = document.querySelector('#list');
+const $status = document.querySelector('#status'); 
 //推測ボタンイベント
 $inputBtn.addEventListener('click', ()=> {
     checkForm();
-    
 });
 //Enterキーでも判定
 $enterNumber.addEventListener('keydown', (e) => {
@@ -31,12 +36,12 @@ $resetBtn.addEventListener('click', ()=> {
     prevGuess = null;
     answer = Math.floor(Math.random()*100)+1; //再生成
     history.length = '';
-    // UIをリセット
-    $inputBtn.disabled = false;
-    $resetBtn.disabled = true;
+    $status.innerHTML = '';
     $lists.replaceChildren();
     $enterNumber.value = '';
     $enterNumber.focus();
+    // UIをリセット
+    setPlaying(true);
     return;
 })
 $resetBtn.disabled = true;
@@ -66,8 +71,7 @@ function checkForm() {
     } else if( tries >= MAX_TRIES ) {
         isFinished = true;
         console.log(`ゲームオーバー！正解は ${answer}`);
-        $inputBtn.disabled = true;
-        $resetBtn.disabled = false;
+        setPlaying(false);
     }
     update();
     $enterNumber.value = '';
@@ -77,13 +81,12 @@ function checkForm() {
 //数値が合っているか判定関数
    function judgeNumber(guess) {
     const diff = Math.abs(answer - guess);
-    if ( tries === 3 || tries === 7) { console.log(`ヒント：${diff - 20}~${diff + 20 }の範囲です。`);} 
+    if ((tries % 3 === 0 && !isFinished)) { console.log(`ヒント：${low}~${high}の範囲です。`);} 
     let result = '';
     if ( diff === 0 ) {
         result = '正解！！';
         console.log(`${tries}回でクリアできたよ！！`)
-        $inputBtn.disabled = true;
-        $resetBtn.disabled = false;
+        setPlaying(false);
         return true;
     }
     if ( diff <= 10 ) {
@@ -91,18 +94,31 @@ function checkForm() {
     } else {
         result = 'ハズレ！';
     }
-    history.unshift( {tries, guess, result});
-    //履歴の表示を配列で行うときに一回毎にクリアしないと重複してしまう。
+   
     $lists.innerHTML = '';
-    history.forEach((h)=> {
-    const li = document.createElement('li');
-    li.textContent = `${tries}回目 / 入力:${h.guess} / 結果:${h.result}`;
-    $lists.appendChild(li);
-    })
-    console.log(result);
-    console.log(`答え${guess}, ${answer}`);
+    pushHistory({ guess, result });
     return false;
 }
- function update() {
-    console.log(`${tries}:回目`);
- }
+function pushHistory(entry) {
+  history.unshift(entry);
+  if (history.length > MAX_HISTORY) history.pop();
+  renderHistory();
+}
+function renderHistory() {
+  $lists.innerHTML = '';
+  history.forEach(h => {
+    const li = document.createElement('li');
+    li.textContent = `入力:${h.guess} / 結果:${h.result}`;
+    $lists.appendChild(li);
+  });
+}
+function setPlaying(enabled) {
+  $inputBtn.disabled = !enabled;
+  $enterNumber.disabled = !enabled;
+  $resetBtn.disabled = enabled;
+}
+
+function update() {
+  const remain = Math.max(0, MAX_TRIES - tries);
+  $status.textContent = `${tries}回目 / 残り${remain}回`;
+}
