@@ -1,1 +1,0 @@
-document.addEventListener("DOMContentLoaded",function(){document.querySelector(".js-problem_content_html img").setAttribute("onerror","this.src='/skillcheck/no_image.png'")});
