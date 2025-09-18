@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/reset.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="todo-card">
+        <h2 class="todo-card__title">TODO LIST</h2>
+        <input type="text" placeholder="TODO" class="todo-card__input">
+        <button type="button" class="todo-button todo-card__reset-button">削除</button>
+        <button type="button" class="todo-button todo-card__add-button">追加</button>
+        <p class="todo-card__length">入力文字数:0/24</p>
+        <p class="todo-card__alert"></p>
+
+        <ul class="todo-card__list">
+            <!-- <li class="todo-card__item">
+                <input type="checkbox" class="todo-card__action todo-card__action--done">
+                <span class="todo-card__text">洗濯する</span>
+                <button type="button" class="todo-card__action todo-card__action--delete">🗑</button>
+                <p class="todo-card__time">登録時間：2025.09.16 09:00</p>
+            </li> -->
+        </ul>
+    </div>
+    <script src="./script.js"></script>
+</body>
+</html>

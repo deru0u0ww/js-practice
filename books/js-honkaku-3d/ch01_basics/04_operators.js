@@ -1,5 +1,3 @@
-'use strict';
-
 //算術演算子
 console.log( 1 + 2 ); //3
 console.log( '田中' + '太郎'); //田中太郎
