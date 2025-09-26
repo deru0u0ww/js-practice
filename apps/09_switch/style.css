@@ -1,0 +1,35 @@
+html { font-size: 16px; }
+body {
+    margin: 0;
+    padding : 0;
+    background-color: #2C242A;
+}
+.light-bulb__wrap {
+  display: flex;
+  flex-direction: column;   /* 縦に並べる */
+  justify-content: center;  /* 縦方向の中央 */
+  align-items: center;      /* 横方向の中央 */
+  height: 100vh;            /* 画面全体を高さに */
+
+}
+.light-bulb__image {
+    width: 20rem;
+    height: auto;
+    background-color: #3a555f;
+    border-radius: 50%;
+    border: 1rem solid #4B3B2B;
+}
+.light-bulb__switch {
+    margin:2rem 0 0 0;
+    width: 10rem;
+    font-size: 2rem;
+    text-align: right;
+    padding: 0 1rem 0 0;
+    border: none;
+    background-color: #fff;
+    color: #aaa;
+}
+.filter-light {
+    filter: brightness(1.6);
+    filter: contrast(1);
+}
